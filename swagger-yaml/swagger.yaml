@@ -1,0 +1,131 @@
+---
+swagger: "2.0"
+info:
+  description: "API for Arundo Sharing"
+  version: "1.0.0"
+  title: "Arundo Share API"
+  contact:
+    email: "support@arundo.com"
+  license:
+    name: "MIT"
+    url: "TBD"
+host: "virtserver.swaggerhub.com"
+basePath: "/JonClayton/Shares/1.0.0"
+tags:
+- name: "admin"
+  description: "Secured Admin-only calls"
+- name: "arundo"
+  description: "Operations available to regular developers"
+- name: "user"
+  description: "Operations available to regular users"
+- name: "ds"
+  description: "Operations avaialble to data scientists"
+schemes:
+- "https"
+paths:
+  /shares:
+    get:
+      tags:
+      - "user"
+      summary: "searches shares"
+      description: "Search for share with one or more parameter matches"
+      operationId: "getSearch"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "objectId"
+        in: "query"
+        description: "pass an optional search string for looking up by objectId"
+        required: false
+        type: "string"
+      - name: "sharingId"
+        in: "query"
+        description: "pass an optional search string for looking up by who shared\
+          \ it"
+        required: false
+        type: "string"
+      - name: "sharedId"
+        in: "query"
+        description: "pass an optional search string for looking up by who it was\
+          \ shared with"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "search results matching criteria"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ShareObject"
+        400:
+          description: "bad input parameter"
+    post:
+      tags:
+      - "user"
+      summary: "adds a share of a resource"
+      description: "Adds an entry to the share table"
+      operationId: "create"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "shareObject"
+        description: "fields going into the table"
+        required: false
+        schema:
+          $ref: "#/definitions/ShareObject"
+      responses:
+        201:
+          description: "item created"
+        400:
+          description: "invalid input, object invalid"
+        409:
+          description: "a matching item already exists"
+  /shares/{shareId}:
+    delete:
+      tags:
+      - "user"
+      summary: "deletes a share of a resource"
+      description: "Deletes an entry from the share table"
+      operationId: "delete"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "shareId"
+        in: "path"
+        description: "ID of item to be deleted"
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: "item deleted"
+        404:
+          description: "item does not exist"
+definitions:
+  ShareObject:
+    type: "object"
+    required:
+    - "objectId"
+    - "objectType"
+    - "sharedId"
+    properties:
+      shareId:
+        type: "string"
+        format: "uuid"
+        example: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+      sharedId:
+        type: "string"
+        format: "uuid"
+        example: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+      objectId:
+        type: "string"
+        format: "uuid"
+        example: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+      objectType:
+        type: "string"
+        format: "uuid"
+        example: "d290f1ee-6c54-4b01-90e6-d701748f0851"
